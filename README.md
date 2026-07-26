@@ -73,3 +73,4 @@ Confluence 인증(이메일+API 토큰), GitHub PAT(`infra-support`/`FI-FE` read
 - 새 인원 추가/변경 시 `weekly_report.py`의 `PEOPLE`, `PERSON_CATEGORIES` 수정 필요 (accountId는 `lookup_account_id.py`로 조회)
 - 저장소 대상이나 경로별 카테고리 규칙이 바뀌면 `REPO_RULES` 수정
 - 커밋 메시지가 OpenAI로 전송되므로, 사내 데이터 정책상 문제 없는지 확인 필요
+- 커밋 조회는 **기본 브랜치(main)에 머지된 커밋만** 대상으로 함. 아직 머지 안 된 PR의 작업은 포함되지 않음 (의도적 — "작업 공유"는 완료된 작업 기준)
