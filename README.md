@@ -1,6 +1,8 @@
-# weekly-report-bot
+# frontend-weekly-report-bot
 
-매주 월요일, 지난 한 주간의 GitHub 커밋 로그를 모아 Confluence 주간 회의록 페이지를 자동으로 생성/갱신하는 봇.
+매주 월요일, 지난 한 주간의 GitHub 커밋 로그를 모아 **프론트엔드 팀** Confluence 주간 회의록 페이지를 자동으로 생성/갱신하는 봇.
+
+이 저장소(`Confluence-Auto-Write`)는 앞으로 프론트/백엔드/통합 3종류의 회의록 자동화를 담을 예정이라, 리포트별로 폴더를 나눔(`frontend/`, `combined/`, 추후 `backend/`). 공용 로직은 `common/`. 백엔드·통합 회의록은 아직 계획 단계 — [docs/backend-report-plan.md](docs/backend-report-plan.md), [docs/combined-report-plan.md](docs/combined-report-plan.md) 참고.
 
 ## 왜 만들었나
 
@@ -35,17 +37,21 @@ GitHub 커밋 로그 → 사람×카테고리별 수집 → OpenAI 요약 → Co
 
 | 파일 | 역할 |
 |---|---|
-| `weekly_report.py` | 메인 스크립트 (전체 플로우) |
-| `test_weekly_report.py` | 렌더링/파싱 로직 self-check (네트워크 호출 없음) |
-| `lookup_account_id.py` | 참여자 `@멘션`용 Confluence accountId 조회 헬퍼 |
-| `.github/workflows/weekly-report.yml` | 스케줄 실행 워크플로 |
+| `frontend/weekly_report.py` | 프론트엔드 회의록 메인 스크립트 (전체 플로우) |
+| `frontend/test_weekly_report.py` | 렌더링/파싱 로직 self-check (네트워크 호출 없음) |
+| `combined/weekly_report.py` | 통합 회의록 스크립트 — **미완성/미배포**, [docs/combined-report-plan.md](docs/combined-report-plan.md) 참고 |
+| `common/confluence_client.py` | Confluence REST API 공용 헬퍼 (여러 회의록 스크립트가 공유) |
+| `common/lookup_account_id.py` | 참여자 `@멘션`용 Confluence accountId 조회 헬퍼 |
+| `.github/workflows/frontend-weekly-report.yml` | 프론트엔드 회의록 스케줄 실행 워크플로 |
+
+각 폴더의 스크립트는 `common`을 절대 경로로 import하므로(`from common.confluence_client import ...`), 항상 **저장소 루트에서 `-m` 옵션으로** 실행해야 함 (예: `python -m frontend.weekly_report`) — `python frontend/weekly_report.py`처럼 직접 실행하면 import가 깨짐.
 
 ## 로컬에서 실행하기
 
 ```bash
 python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
-.venv/bin/python weekly_report.py
+.venv/bin/python -m frontend.weekly_report
 ```
 
 ## 환경변수
@@ -70,7 +76,7 @@ Confluence 인증(이메일+API 토큰), GitHub PAT(`infra-support`/`FI-FE` read
 
 ## 참고
 
-- 새 인원 추가/변경 시 `weekly_report.py`의 `PEOPLE`, `PERSON_CATEGORIES` 수정 필요 (accountId는 `lookup_account_id.py`로 조회)
+- 새 인원 추가/변경 시 `frontend/weekly_report.py`의 `PEOPLE`, `PERSON_CATEGORIES` 수정 필요 (accountId는 `python -m common.lookup_account_id "이름"`으로 조회)
 - 저장소 대상이나 경로별 카테고리 규칙이 바뀌면 `REPO_RULES` 수정
 - 커밋 메시지가 OpenAI로 전송되므로, 사내 데이터 정책상 문제 없는지 확인 필요
 - 커밋 조회는 **기본 브랜치(main)에 머지된 커밋만** 대상으로 함. 아직 머지 안 된 PR의 작업은 포함되지 않음 (의도적 — "작업 공유"는 완료된 작업 기준)
