@@ -1,4 +1,4 @@
-from weekly_report import render_person_block, render_people_list, render_page, extract_openai_text
+from frontend.weekly_report import render_person_block, render_people_list, render_page, extract_openai_text
 
 # extract_openai_text handles both response shapes the Responses API can return
 assert extract_openai_text({"output_text": " 요약 문장 "}) == "요약 문장"
@@ -34,16 +34,17 @@ assert "a. 지권:" in people_html
 assert "b. 수현:" in people_html
 assert "c. 준열:" in people_html
 
-# sections 1-5 are numbered inline labels, not headings
+# sections 1-4 are numbered inline labels, not headings
+# ("전체 회의 공유 사안" moved to the combined report — see docs/combined-report-plan.md)
 page = render_page("2026-07-27", {"지권": {}, "수현": {}, "준열": {}})
 for label in [
     "1. 작업 공유",
     "2. 이후 작업 공유",
     "3. 공유/이슈/질문 공유",
     "4. 백엔드 미팅 공유 사안",
-    "5. 전체 회의 공유 사안",
 ]:
     assert f"<strong>{label}</strong>" in page
+assert "전체 회의 공유 사안" not in page
 for text in ["<h2><ac:emoticon", "날짜</h2>", "참여자</h2>", 'ac:emoji-id="1f5d3"', 'ac:emoji-id="1f465"']:
     assert text in page
 
