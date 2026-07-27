@@ -1,6 +1,6 @@
 """One-off helper: look up a Confluence Cloud accountId by display name.
 
-Usage: python lookup_account_id.py "서지권"
+Usage: python -m common.lookup_account_id "서지권"
 """
 import os
 import sys
@@ -8,11 +8,9 @@ import sys
 import requests
 from dotenv import load_dotenv
 
+from common.confluence_client import confluence_auth
+
 load_dotenv()
-
-
-def confluence_auth():
-    return (os.environ["CONFLUENCE_EMAIL"], os.environ["CONFLUENCE_API_TOKEN"])
 
 
 def main():
