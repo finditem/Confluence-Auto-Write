@@ -64,8 +64,6 @@ GitHub 커밋 로그 → 사람(×카테고리)별 수집 → OpenAI 요약 → 
 | `.github/workflows/backend-weekly-report.yml` | 백엔드 회의록 스케줄 실행 워크플로 |
 | `.github/workflows/combined-weekly-report.yml` | 통합 회의록 스케줄 실행 워크플로 |
 
-각 폴더의 스크립트는 `common`을 절대 경로로 import하므로(`from common.confluence_client import ...`), 항상 **저장소 루트에서 `-m` 옵션으로** 실행해야 함 (예: `python -m frontend.weekly_report`) — `python frontend/weekly_report.py`처럼 직접 실행하면 import가 깨짐.
-
 ## 로컬에서 실행하기
 
 ```bash
