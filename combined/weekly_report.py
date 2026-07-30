@@ -1,12 +1,9 @@
 """Combined frontend+backend weekly meeting note.
 
 Pulls the "백엔드 미팅 공유 사안" section out of this week's frontend report and
-drops it into the combined page's "프론트 공유 사안" section. See
-docs/combined-report-plan.md for the full design and open decisions.
-
-NOT WIRED UP YET — no GitHub Actions workflow, no destination space/folder,
-and no backend-side section (backend automation doesn't exist yet). Run
-manually once COMBINED_SPACE_KEY / COMBINED_PARENT_PAGE_ID are set.
+the "프론트 미팅 공유 사항" section out of this week's backend report, and drops
+each into the combined page's matching section. See docs/combined-report-plan.md
+for the full design.
 """
 import os
 from datetime import datetime, timedelta, timezone
@@ -14,7 +11,7 @@ from html import escape
 
 from dotenv import load_dotenv
 
-from common.confluence_client import get_page_body, upsert_page
+from common.confluence_client import get_or_create_folder, get_page_body, upsert_page
 
 load_dotenv()
 
@@ -32,21 +29,21 @@ PEOPLE_BY_TEAM = [
     ]),
 ]
 
-# The marker paragraph that starts the section we pull out of the frontend
-# report. It's currently the last section on that page, so everything after
-# this marker belongs to it.
+# Marker paragraphs that start the section we pull out of each source report.
+# Each is the last section on its page, so everything after the marker belongs to it.
 FRONTEND_SECTION_MARKER = "<p><strong>4. 백엔드 미팅 공유 사안</strong></p>"
+BACKEND_SECTION_MARKER = "<p><strong>4. 프론트 미팅 공유 사항</strong></p>"
 
 
 def most_recent_monday(date):
     return date - timedelta(days=date.weekday())
 
 
-def extract_frontend_backend_section(body_html):
-    """Return the storage-format HTML after FRONTEND_SECTION_MARKER, or None if not found."""
-    if body_html is None or FRONTEND_SECTION_MARKER not in body_html:
+def extract_section_after_marker(body_html, marker):
+    """Return the storage-format HTML after `marker`, or None if not found."""
+    if body_html is None or marker not in body_html:
         return None
-    return body_html.split(FRONTEND_SECTION_MARKER, 1)[1].strip()
+    return body_html.split(marker, 1)[1].strip()
 
 
 def render_mention(account_id):
@@ -62,8 +59,9 @@ def render_participants():
     return f"<table><tbody><tr>{''.join(cells)}</tr></tbody></table>"
 
 
-def render_page(iso_date, frontend_section_html):
+def render_page(iso_date, frontend_section_html, backend_section_html):
     frontend_section = frontend_section_html or "<p>-</p>"
+    backend_section = backend_section_html or "<p>-</p>"
     return f"""
 <h2>날짜</h2>
 <p><time datetime="{escape(iso_date)}" /></p>
@@ -72,10 +70,12 @@ def render_page(iso_date, frontend_section_html):
 <p><strong>1. 프론트 공유 사안</strong></p>
 {frontend_section}
 <p><strong>2. 백엔드 공유 사안</strong></p>
+{backend_section}
+<p><strong>3. 최종 공유 사안</strong></p>
 <p>-</p>
-<p><strong>3. 전체 회의 공유 사안</strong></p>
+<p><strong>4. 전체 회의 공유 사안</strong></p>
 <p>-</p>
-<p><strong>4. 공유/이슈/질문 공유</strong></p>
+<p><strong>5. 공유/이슈/질문 공유</strong></p>
 <p>-</p>
 """.strip()
 
@@ -84,21 +84,34 @@ def main():
     now = datetime.now(KST)
     monday = most_recent_monday(now)
     iso_date = now.strftime("%Y-%m-%d")
-    frontend_title = monday.strftime("%m월 %d일 미팅")
-    title = now.strftime("%m월 %d일 통합 미팅")  # placeholder — title format not decided yet
+    source_title = monday.strftime("%m월 %d일 미팅")  # same title format on both source reports
+    title = now.strftime("%m월 %d일 개발 미팅")
+    monthly_folder_title = f"통합 {now.strftime('%y')}년 {now.month}월"
 
     base_url = os.environ["CONFLUENCE_BASE_URL"]
     frontend_space_key = os.environ["FRONTEND_SPACE_KEY"]
+    backend_space_key = os.environ["BACKEND_SPACE_KEY"]
+    combined_space_key = os.environ["COMBINED_SPACE_KEY"]
 
-    frontend_body = get_page_body(base_url, frontend_space_key, frontend_title)
-    frontend_section = extract_frontend_backend_section(frontend_body)
+    frontend_body = get_page_body(base_url, frontend_space_key, source_title)
+    frontend_section = extract_section_after_marker(frontend_body, FRONTEND_SECTION_MARKER)
 
-    body_html = render_page(iso_date, frontend_section)
+    backend_body = get_page_body(base_url, backend_space_key, source_title)
+    backend_section = extract_section_after_marker(backend_body, BACKEND_SECTION_MARKER)
+
+    body_html = render_page(iso_date, frontend_section, backend_section)
+
+    monthly_folder_id = get_or_create_folder(
+        base_url=base_url,
+        space_key=combined_space_key,
+        parent_id=os.environ["COMBINED_PARENT_PAGE_ID"],
+        title=monthly_folder_title,
+    )
 
     result = upsert_page(
         base_url=base_url,
-        space_key=os.environ["COMBINED_SPACE_KEY"],
-        parent_id=os.environ["COMBINED_PARENT_PAGE_ID"],
+        space_key=combined_space_key,
+        parent_id=monthly_folder_id,
         title=title,
         body_html=body_html,
     )
