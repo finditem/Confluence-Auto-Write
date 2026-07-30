@@ -1,0 +1,27 @@
+name: Backend Weekly Report
+
+on:
+  schedule:
+    - cron: "47 22 * * 0" # every Monday 07:47 KST (Sunday 22:47 UTC)
+  workflow_dispatch: {}
+
+jobs:
+  post-to-confluence:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: python -m backend.weekly_report
+        env:
+          CONFLUENCE_BASE_URL: ${{ secrets.CONFLUENCE_BASE_URL }}
+          CONFLUENCE_EMAIL: ${{ secrets.CONFLUENCE_EMAIL }}
+          CONFLUENCE_API_TOKEN: ${{ secrets.CONFLUENCE_API_TOKEN }}
+          BACKEND_SPACE_KEY: ${{ secrets.BACKEND_SPACE_KEY }}
+          BACKEND_PARENT_PAGE_ID: ${{ secrets.BACKEND_PARENT_PAGE_ID }}
+          BACKEND_GH_PAT: ${{ secrets.BACKEND_GH_PAT }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_BASE_URL: ${{ secrets.OPENAI_BASE_URL }}
+          OPENAI_MODEL: ${{ secrets.OPENAI_MODEL }}
