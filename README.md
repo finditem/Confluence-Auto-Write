@@ -69,18 +69,6 @@ GitHub 커밋 로그 → 사람(×카테고리)별 수집 → OpenAI 요약 → 
 | `.github/workflows/combined-weekly-report.yml` | 통합 회의록 스케줄 실행 워크플로 |
 
 
-## 로컬에서 실행하기
-
-```bash
-python3 -m venv .venv
-.venv/bin/pip install -r requirements.txt
-.venv/bin/python -m frontend.weekly_report
-```
-
-
 ## 참고
 
-- 새 인원 추가/변경 시 `frontend/weekly_report.py`의 `PEOPLE`, `PERSON_CATEGORIES` 수정 필요 (accountId는 `python -m common.lookup_account_id "이름"`으로 조회)
-- 저장소 대상이나 경로별 카테고리 규칙이 바뀌면 `REPO_RULES` 수정
-- 커밋 메시지가 OpenAI로 전송되므로, 사내 데이터 정책상 문제 없는지 확인 필요
 - 커밋 조회는 **기본 브랜치(main)에 머지된 커밋만** 대상으로 함. 아직 머지 안 된 PR의 작업은 포함되지 않음 (의도적 — "작업 공유"는 완료된 작업 기준)
