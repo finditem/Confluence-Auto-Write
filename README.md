@@ -2,7 +2,7 @@
 
 매주 월요일, 지난 한 주간의 GitHub 커밋 로그를 모아 **프론트엔드 팀** Confluence 주간 회의록 페이지를 자동으로 생성/갱신하는 봇.
 
-이 저장소(`Confluence-Auto-Write`)는 프론트/백엔드/통합 3종류의 회의록 자동화를 담고 있어서, 리포트별로 폴더를 나눔(`frontend/`, `backend/`, `combined/`). 공용 로직은 `common/`. 백엔드·통합 회의록은 코드는 있지만 스페이스/폴더 확정 전이라 아직 미배포 — [docs/backend-report-plan.md](docs/backend-report-plan.md), [docs/combined-report-plan.md](docs/combined-report-plan.md) 참고.
+이 저장소(`Confluence-Auto-Write`)는 프론트/백엔드/통합 3종류의 회의록 자동화를 담고 있어서, 리포트별로 폴더를 나눔(`frontend/`, `backend/`, `combined/`). 공용 로직은 `common/`. 백엔드·통합 회의록은 코드·워크플로·스페이스/폴더 설정까지 끝났고 실행 검증만 남음 — [docs/backend-report-plan.md](docs/backend-report-plan.md), [docs/combined-report-plan.md](docs/combined-report-plan.md) 참고.
 
 ## 왜 만들었나
 
