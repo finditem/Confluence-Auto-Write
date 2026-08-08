@@ -172,12 +172,16 @@ def render_page(iso_date, work_summary):
 <p><time datetime="{escape(iso_date)}" /></p>
 <h2>{PEOPLE_EMOJI} 참여자</h2>
 <ul>{participants_html}</ul>
+<p>&nbsp;</p>
 <p><strong>1. 작업 공유</strong></p>
 {work_html}
+<p>&nbsp;</p>
 <p><strong>2. 이후 작업 공유</strong></p>
 {next_work_html}
+<p>&nbsp;</p>
 <p><strong>3. 공유/이슈/질문 공유</strong></p>
 <p>-</p>
+<p>&nbsp;</p>
 <p><strong>4. 백엔드 미팅 공유 사안</strong></p>
 <p>-</p>
 """.strip()
