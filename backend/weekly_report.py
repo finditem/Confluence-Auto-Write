@@ -12,9 +12,10 @@ load_dotenv()
 
 KST = timezone(timedelta(hours=9))
 
-# (display name, github username, confluence accountId) — backend is a one-person team for now
+# (display name, github username, confluence accountId)
 PEOPLE = [
     ("유세정", "Yoosejeong", "712020:d5e6ae58-a92f-4c7a-9502-fe55e159428b"),
+    ("박상혁", "sangcci", "712020:d3304c0e-4c6a-4a1d-aa2f-9155d174a641"),
 ]
 
 REPOS = ["finditem/FI-BE"]
@@ -127,12 +128,16 @@ def render_page(iso_date, work_summary):
 <p><time datetime="{escape(iso_date)}" /></p>
 <h2>{PEOPLE_EMOJI} 참여자</h2>
 <ul>{participants_html}</ul>
+<p>&nbsp;</p>
 <p><strong>1. 작업 공유</strong></p>
 {work_html}
+<p>&nbsp;</p>
 <p><strong>2. 이후 작업 공유</strong></p>
 {next_work_html}
+<p>&nbsp;</p>
 <p><strong>3. 공유/이슈/질문 공유</strong></p>
 <p>-</p>
+<p>&nbsp;</p>
 <p><strong>4. 프론트 미팅 공유 사항</strong></p>
 <p>-</p>
 """.strip()
