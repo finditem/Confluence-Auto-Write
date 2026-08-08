@@ -13,7 +13,10 @@ html = render_people_list({"유세정": "API 리팩터링, CORS 설정 정리"})
 assert '<p style="margin-left: 30.0px;">a. 유세정 : API 리팩터링, CORS 설정 정리</p>' in html
 
 # missing summary renders a dash, not blank
-assert render_people_list({}) == '<p style="margin-left: 30.0px;">a. 유세정 : -</p>'
+assert render_people_list({}) == (
+    '<p style="margin-left: 30.0px;">a. 유세정 : -</p>'
+    '<p style="margin-left: 30.0px;">b. 박상혁 : -</p>'
+)
 
 # HTML-escapes the summary to avoid breaking the Confluence page
 assert "&lt;script&gt;" in render_people_list({"유세정": "<script>bad</script>"})
