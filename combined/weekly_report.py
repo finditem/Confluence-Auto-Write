@@ -26,6 +26,7 @@ PEOPLE_BY_TEAM = [
     ]),
     ("백엔드", [
         ("유세정", "712020:d5e6ae58-a92f-4c7a-9502-fe55e159428b"),
+        ("박상혁", "712020:d3304c0e-4c6a-4a1d-aa2f-9155d174a641"),
     ]),
 ]
 
@@ -67,14 +68,19 @@ def render_page(iso_date, frontend_section_html, backend_section_html):
 <p><time datetime="{escape(iso_date)}" /></p>
 <h2>참가자</h2>
 {render_participants()}
+<p>&nbsp;</p>
 <p><strong>1. 프론트 공유 사안</strong></p>
 {frontend_section}
+<p>&nbsp;</p>
 <p><strong>2. 백엔드 공유 사안</strong></p>
 {backend_section}
+<p>&nbsp;</p>
 <p><strong>3. 최종 공유 사안</strong></p>
 <p>-</p>
+<p>&nbsp;</p>
 <p><strong>4. 전체 회의 공유 사안</strong></p>
 <p>-</p>
+<p>&nbsp;</p>
 <p><strong>5. 공유/이슈/질문 공유</strong></p>
 <p>-</p>
 """.strip()
