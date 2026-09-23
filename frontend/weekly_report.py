@@ -21,7 +21,7 @@ PEOPLE = [
 
 # Categories always shown per person, in display order
 PERSON_CATEGORIES = {
-    "지권": ["운영", "모니터링"],
+    "지권": ["운영", "모니터링", "어드민"],
     "수현": ["운영", "일정관리"],
     "준열": ["운영", "모니터링"],
 }
@@ -34,6 +34,9 @@ REPO_RULES = [
     ]),
     ("finditem/FI-FE", [
         ([], "운영"),
+    ]),
+    ("finditem/admin", [
+        ([], "어드민"),
     ]),
 ]
 
@@ -58,7 +61,8 @@ def fetch_commits(repo, author, since, until, path=None):
         params["path"] = path
     resp = requests.get(f"{GITHUB_API}/repos/{repo}/commits", headers=github_headers(), params=params)
     resp.raise_for_status()
-    return resp.json()
+    # merge commits (2+ parents) carry no work of their own — keep them out of summaries
+    return [c for c in resp.json() if len(c["parents"]) < 2]
 
 
 def build_work_summary(since, until):

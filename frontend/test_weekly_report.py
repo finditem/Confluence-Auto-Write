@@ -19,6 +19,7 @@ assert render_person_block("지권", {}, "a") == (
     '<p style="margin-left: 30.0px;">a. 지권:</p>'
     '<p style="margin-left: 60.0px;">(운영) :</p>'
     '<p style="margin-left: 60.0px;">(모니터링) :</p>'
+    '<p style="margin-left: 60.0px;">(어드민) :</p>'
 )
 
 # person's fixed category list differs (수현 gets 일정관리, not 모니터링)

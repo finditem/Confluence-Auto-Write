@@ -39,7 +39,8 @@ def fetch_commits(repo, author, since, until):
     }
     resp = requests.get(f"{GITHUB_API}/repos/{repo}/commits", headers=github_headers(), params=params)
     resp.raise_for_status()
-    return resp.json()
+    # merge commits (2+ parents) carry no work of their own — keep them out of summaries
+    return [c for c in resp.json() if len(c["parents"]) < 2]
 
 
 def build_work_summary(since, until):
